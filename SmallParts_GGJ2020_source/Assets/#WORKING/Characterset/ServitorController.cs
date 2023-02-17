@@ -31,7 +31,14 @@ public class ServitorController : MonoBehaviour
 
     [SerializeField]
     private float targetHeight;
-    
+
+    [SerializeField]
+    private GameObject _arrow;
+
+    [SerializeField]
+    private List<Transform> _lights = new List<Transform>();
+    [SerializeField]
+    private float _lightUpDistance = 10f;
     public Element Element { get; private set; }
     /// <summary>
     /// how quickly we respond to changes in terrain height
@@ -121,7 +128,11 @@ public class ServitorController : MonoBehaviour
     {
         this.Element = element;
         this.ElementEvent?.Invoke(this, EventArgs.Empty);
-        if (element!= Element.None) this.face.SetExpression(ServitorFace.Expression.Happy, 3f, true);
+        if (element != Element.None) 
+        {
+            this.face.SetExpression(ServitorFace.Expression.Happy, 3f, true);
+            _arrow.GetComponent<Arrow>().SetElement(Element);
+        };
 
     }
 
@@ -177,6 +188,8 @@ public class ServitorController : MonoBehaviour
         //    this.SetElement(Element.None);
         //    this.SetPosition(Vector3.zero);
         //}
+
+        
         bool lockMovement = this.isLocked || this.bumper.IsFadingIn;
 
         var h = Input.GetAxis("Horizontal");
@@ -277,6 +290,19 @@ public class ServitorController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void FixedUpdate()
+    {
+        // check through the distances to elements, if player is within a certain range then the area lights up
+        if (Vector3.Distance(transform.position, _lights[0].position) < _lightUpDistance) _lights[0].gameObject.SetActive(true);
+        else _lights[0].gameObject.SetActive(false);
+
+        if (Vector3.Distance(transform.position, _lights[1].position) < _lightUpDistance) _lights[1].gameObject.SetActive(true);
+        else _lights[1].gameObject.SetActive(false);
+
+        if (Vector3.Distance(transform.position, _lights[2].position) < _lightUpDistance) _lights[2].gameObject.SetActive(true);
+        else _lights[2].gameObject.SetActive(false);
     }
 
     public void LateUpdate()
