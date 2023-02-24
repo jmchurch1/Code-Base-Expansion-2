@@ -165,6 +165,7 @@ public class ServitorController : MonoBehaviour
         }
         else this.face.SetExpression(ServitorFace.Expression.Sad, 1f, true);
         this.SetElement(Element.None);
+        _arrow.GetComponent<Arrow>().SetElement(Element.None);
         // effect for element
         target.OnUseElement(element);
     }

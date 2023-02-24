@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 public class Arrow : MonoBehaviour
@@ -43,24 +44,17 @@ public class Arrow : MonoBehaviour
     private void MoveTowardsPosition(Vector3 goalLocation)
     {
         // get the bounds of the screen
-        Vector3 bottomLeft = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0, 0));
-        Vector3 topRight = _mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
-
-        Debug.DrawLine(topRight, bottomLeft, Color.red);
+        Vector3 topRight = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0, -10));
+        Vector3 bottomLeft = _mainCamera.ViewportToWorldPoint(new Vector3(1, 1, -10));
 
         float topBound = topRight.y;
         float bottomBound = bottomLeft.y;
         float leftBound = bottomLeft.x;
         float rightBound = topRight.x;
 
-
-        if (_player.transform.position.y < topBound && _player.transform.position.y > bottomBound && _player.transform.position.x > leftBound && _player.transform.position.x < rightBound)
-        {
-            Debug.Log("Player was within bounds of camera");
-        }
-     
         // get the direction of the goal position from the player
         Vector3 direction = (goalLocation - _player.transform.position).normalized;
+        direction /= 20;
 
         Vector3 targetForward = Quaternion.LookRotation(direction) * Vector3.forward;
         transform.rotation = Quaternion.Euler(targetForward);
@@ -73,14 +67,14 @@ public class Arrow : MonoBehaviour
         else
         {
             Vector3 currPosition = _player.transform.position;
-            for (int i = 2; i < 100; i++)
+            Vector3 tmpPosition = currPosition;
+            for (int i = 2; i < 500; i++)
             {
-                Vector3 tmpPosition = currPosition;
-                tmpPosition *= i;
+                
+                tmpPosition += direction;
                 if (tmpPosition.y > topBound || tmpPosition.y < bottomBound || tmpPosition.x < leftBound || tmpPosition.x > rightBound)
                 {
-                    Debug.Log(tmpPosition);
-                    currPosition *= (i - 1);
+                    currPosition = tmpPosition - direction * 20;
                     break;
                 }
             }
